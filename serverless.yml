@@ -63,16 +63,9 @@ resources:
         AttributeDefinitions:
           - AttributeName: team_country
             AttributeType: S
-          - AttributeName: team_name
-            AttributeType: S
-          - AttributeName: team_desc
-            AttributeType: S
-          - AttributeName: team_rating
-            AttributeType: S
         KeySchema:
-          - 
-            AttributeName: team_country
+          - AttributeName: team_country
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
-        TableName: Challenge_DB
+        TableName: Challenge
 

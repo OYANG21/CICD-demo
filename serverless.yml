@@ -1,12 +1,38 @@
 service: cicd-demo
+
+plugins:
+  - serverless-python-requirements
+
 provider:
   name: aws
   runtime: python3.7
   region: us-east-1
 
+  deploymentBucket:
+    serverSideEncryption: AES256
+    blockPublicAccess: true
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query 
+        - dynamodb:Scan
+        - dynamodb:etItem 
+        - dynamodb:PutItem     
+        - dynamodb:UpdateItem 
+        - dynamodb:DeleteItem
+      Resource:
+        - '*'
+        #- arn:aws:dynamo:*account:table/name*
+
 custom:
   pythonRequirements:
     dockerizePip: true
+    dynamodb:
+      stages:
+        - dev
+      start:
+        migrate: true
 
 package:
   individually: false
@@ -22,6 +48,25 @@ functions:
       - http:
           path: joke
           method: get
+  add_new:
+    handler: handler.dynamo_itemcreate
+    events:
+      - http:
+          path: add_new
+          method: post
 
-plugins:
-  - serverless-python-requirements
+resources:
+  Resources:
+    ChallengeDB:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: team_country
+            AttributeType: S
+        KeySchema:
+          - 
+            AttributeName: team_country
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: Challenge_DB
+

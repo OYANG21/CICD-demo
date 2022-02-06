@@ -16,11 +16,12 @@ provider:
     - Effect: Allow
       Action:
         - dynamodb:Query 
-        - dynamodb:Scan
-        - dynamodb:etItem 
+        - dynamodb:GetItem 
         - dynamodb:PutItem     
         - dynamodb:UpdateItem 
         - dynamodb:DeleteItem
+        - lambda:*
+        - log:*
       Resource:
         - '*'
         #- arn:aws:dynamo:*account:table/name*
@@ -44,10 +45,15 @@ package:
 functions:
   add_new:
     handler: handler.dynamo_itemCreate
+    timeout: 5
     events:
       - http:
+          integration: lambda
           path: add_new
+          cors: false
           method: post
+          request:
+            passThrough: NEVER
 
 resources:
   Resources:
@@ -56,6 +62,12 @@ resources:
       Properties:
         AttributeDefinitions:
           - AttributeName: team_country
+            AttributeType: S
+          - AttributeName: team_name
+            AttributeType: S
+          - AttributeName: team_desc
+            AttributeType: S
+          - AttributeName: team_rating
             AttributeType: S
         KeySchema:
           - 

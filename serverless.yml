@@ -44,7 +44,7 @@ package:
 
 functions:
   add_new:
-    handler: handler.dynamo_itemCreate
+    handler: handler.lambda_handler
     timeout: 5
     events:
       - http:

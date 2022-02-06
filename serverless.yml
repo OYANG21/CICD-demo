@@ -42,14 +42,8 @@ package:
     - node_modules/**
 
 functions:
-  get_joke:
-    handler: handler.get_joke
-    events:
-      - http:
-          path: joke
-          method: get
   add_new:
-    handler: handler.dynamo_itemcreate
+    handler: handler.dynamo_itemCreate
     events:
       - http:
           path: add_new

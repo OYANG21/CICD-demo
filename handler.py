@@ -1,18 +1,5 @@
 import json
 import boto3
-import pyjokes
-
-
-def get_joke(event, context):
-        body = {
-        "message": "Greetings from Githun. Your function is deployed by a Github Actions. Enjoy your joke",
-        "joke": pyjokes.get_joke()
-        }
-        response = {
-        "statusCode": 200,
-        "body": json.dumps(body)
-        }
-        return response
 
 def dynamo_itemcreate(team_name, team_country, team_desc, team_rating):
         dynamodb = boto3.client('dynamodb')

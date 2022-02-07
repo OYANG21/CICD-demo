@@ -1,40 +1,105 @@
-# Devops-CICD-example
+# ContinoTest
 
-Demo pipeline using Serverless Framework and Github Actions to deploy lambda functions with APIGateway RestAPI endpoint
+Below tasks are completed in `CICD-demo` branch, switch to `main` branch for Serverless Framework and Github Action CICD workflow 
 
-## Design 
-1. ```handler.py``` file includes lambda function code
-1. Serverless Framework to deploy handler.py to AWS Lambda functions and related APIGateway resources
-1. Github repo to manage source code
-1. Github Action for the pipeline
-    1.1 ```deploy-aws-lambda```
-    1.1 ```AWS Credentials``` are stored in repo secrets
+##Tasks
+Based on this scenario, please work on below tasks:
 
-## How to run
+###Main Task [Done]
 
-1. Currently the workflow is triggered automatically when there is a `commit` or `merge` action on ```main``` branch
-2. Actions workflow can also be maually triggered by navagating to `CiCD-demo -> Actions -> All workflows -> rerun`
+Make the necessary changes so data is successfully written to the DynamoDB table once a POST request is received by the API Gateway
+1. Updated lambda Dynamodb permissions
+2. updated Dynamodb table name in ```Reources``` to match with name in lambda function
+3. Added `Lambdaloggroup` resources for debugging
+4. To deploy the template
+   1. Set up local AWS access key and secret
+   2. run `make deploy-template`
 
-## Improvements for production ready
+###Secondary Task [Done]
 
-As this is a demo pipeline to show the techstack and workflow, there are few improvements needed to be made before production ready.
-### Github and pipeline
-1. Branch protection on main branch
-2. Secrets management
-3. unit testing & integration testing
-4. Security/ code volubility scan 
-5. PR valid checks, merge check for feature and dev branches
+Pick one of following:
 
-### Serverless.yml
-1. add dynamic variables for different environment, aws account, resources arn, etc
-2. add seperate iamrole.yml resource files for cleaner template
-3. add multiple region and cross account resources sharing by output resources etc
-4. add different service repos for different microservices /lambda functions
+####Add any required resources to send a message to a SNS Topic whenever a new item is added to the DynamoDB Table.
+The message can be either table updated or the content of the new item added.
 
-### AWS 
-1. Seperate environment for dev/staging/prod by different environment or AWS accounts
-2. Granular access controls, set up different IAM user roles for different job roles
-3. monitoring and alerting for misconfigurations and application running alerts
+4. Manually added SNS to email features for adding new `team` info to Dynamodb through APIGateway
+   1. Added `src/notification.py` lambda function to handle new `item` create event
+   2. Added DynamoDB Stream Trigger
+   3. ![img_1.png](img_1.png)
+   4. ![img.png](img.png)
+   5. Testing email
+   6. ![img_2.png](img_2.png)
+   7. Reference: https://www.kodyaz.com/aws/dynamodb-streams-send-sns-notification-from-aws-lambda-function-using-python.aspx
+####Implement any type of authentication to the API Gateway. [Done]
+5. Created `testApiAuth` Lambda Authorizer
+6. Created `testApiAuth` lambda function to process the authorization
+```
+   import json
+    def lambda_handler(event, context):
+    print(event)
+    auth = 'Deny'
+    if event['authorizationToken'] == 'testChallenge':
+        auth = 'Allow'
+    else:
+        auth = 'Deny'
 
-##Reference
-https://www.serverless.com/
+    authResponse = {"principalId": "testChallenge", 
+                        "policyDocument": 
+                        {   "Version":"2012-10-17",
+                            "Statement": [ 
+                                    {   "Action": "execute-api:Invoke",
+                                        "Resource":[
+                                            "arn:aws:execute-api:us-east-1:811620960246:ht9nrqipl6/*/*"],
+                                    "Effect": auth
+                                } 
+                            ] 
+                        } 
+                    }
+    return authResponse
+
+```
+7. This can be added to cloudformation to reflect on IAC
+```
+ # ApiAuthorizer:
+  #   Type: AWS::ApiGateway::Authorizer
+  #   Properties:
+  #     AuthType: TOKEN
+  #     AuthorizerUri: "String"
+  #     Name: testApiAuth # Required
+  #     RestApiId: !Ref ApiRestApi # Required
+  #     Type: "String" # Required
+
+  # ApiAuthorizerPermission:
+  #   Type: AWS::Lambda::Permission
+  #   Properties:
+  #     Action: lambda:InvokeFunction
+  #     FunctionName: testApiAuth
+  #     Principal: "apigateway.amazonaws.com"
+  #     SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/authorizers/${GWAuth}"
+```
+8. ![img_3.png](img_3.png)
+
+## Testing result
+![img_5.png](img_5.png)
+![img_4.png](img_4.png)
+
+## Test Analysis & Approaches
+
+1. Check Cloudformation lint, use tools like cfn-lint for typos and formatting errors
+2. Check API Gateway settings to see if `POST` data are passed in correctly
+3. Check AWS resources and dependencies
+3. Check Lambda function for handling of incoming data
+
+### Security
+1. Fellow least privileges Cloud security best practice
+2. set different roles for different job functions, ie, Developer roles normally only have Readonly access to Prod and Staging environment, and DevOps can manage/delete/create resources base on needs
+3. IAM roles per function for granular control
+4. API gateway authentication can use both lambda and token authorisor
+
+### Monitoring
+1. Enable logging and export error metrics
+2. use Dashboard tools, i.e splunk, AMG
+3. forward alerts/notification to email or Slack
+
+## References
+https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-control-access-to-api.html

@@ -1,5 +1,7 @@
 # Devops-CICD-example
 
+Switch to `test` branch for responses to tech challenge response
+
 Demo pipeline using Serverless Framework and Github Actions to deploy lambda functions with APIGateway RestAPI endpoint
 
 ## Design 

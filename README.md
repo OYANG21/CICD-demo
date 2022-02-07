@@ -2,10 +2,10 @@
 
 Below tasks are completed in `CICD-demo` branch, switch to `main` branch for Serverless Framework and Github Action CICD workflow 
 
-##Tasks
+## Tasks
 Based on this scenario, please work on below tasks:
 
-###Main Task [Done]
+### Main Task [Done]
 
 Make the necessary changes so data is successfully written to the DynamoDB table once a POST request is received by the API Gateway
 1. Updated lambda Dynamodb permissions
@@ -15,11 +15,11 @@ Make the necessary changes so data is successfully written to the DynamoDB table
    1. Set up local AWS access key and secret
    2. run `make deploy-template`
 
-###Secondary Task [Done]
+### Secondary Task [Done]
 
 Pick one of following:
 
-####Add any required resources to send a message to a SNS Topic whenever a new item is added to the DynamoDB Table.
+#### Add any required resources to send a message to a SNS Topic whenever a new item is added to the DynamoDB Table.
 The message can be either table updated or the content of the new item added.
 
 4. Manually added SNS to email features for adding new `team` info to Dynamodb through APIGateway
@@ -30,7 +30,7 @@ The message can be either table updated or the content of the new item added.
    5. Testing email
    6. ![img_2.png](img_2.png)
    7. Reference: https://www.kodyaz.com/aws/dynamodb-streams-send-sns-notification-from-aws-lambda-function-using-python.aspx
-####Implement any type of authentication to the API Gateway. [Done]
+#### Implement any type of authentication to the API Gateway. [Done]
 5. Created `testApiAuth` Lambda Authorizer
 6. Created `testApiAuth` lambda function to process the authorization
 ```

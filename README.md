@@ -17,6 +17,11 @@ Demo pipeline using Serverless Framework and Github Actions to deploy lambda fun
 1. Currently the workflow is triggered automatically when there is a `commit` or `merge` action on ```main``` branch
 2. Actions workflow can also be maually triggered by navagating to `CiCD-demo -> Actions -> All workflows -> rerun`
 
+### Replicate this pipeline to your own AWS environment
+1. Navigate to Settings - > Secrets -> Action Secrets
+2. update `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` and save
+3. run the pipeline again 
+
 ## Improvements for production ready
 
 As this is a demo pipeline to show the techstack and workflow, there are few improvements needed to be made before production ready.
@@ -38,5 +43,5 @@ As this is a demo pipeline to show the techstack and workflow, there are few imp
 2. Granular access controls, set up different IAM user roles for different job roles
 3. monitoring and alerting for misconfigurations and application running alerts
 
-##Reference
+## Reference
 https://www.serverless.com/

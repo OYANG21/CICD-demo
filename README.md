@@ -44,4 +44,4 @@ As this is a demo pipeline to show the techstack and workflow, there are few imp
 3. monitoring and alerting for misconfigurations and application running alerts
 
 ## Reference
-https://www.serverless.com/
+https://www.serverless.com/.
